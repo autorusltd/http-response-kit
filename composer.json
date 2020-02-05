@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": "^7.1",
-        "sunrise/http-factory": "^1.2"
+        "sunrise/http-message": "^1.2"
     },
     "require-dev": {
         "arus/php-coding-standard": "^1.0",
