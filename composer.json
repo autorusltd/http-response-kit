@@ -1,0 +1,39 @@
+{
+    "name": "arus/http-responder",
+    "homepage": "https://github.com/autorusltd/http-responder",
+    "description": "Arus // HTTP responder for PHP 7.1+ based on PSR-17",
+    "license": "MIT",
+    "keywords": [
+        "arus",
+        "fenric",
+        "psr-7",
+        "psr-17",
+        "responder"
+    ],
+    "authors": [
+        {
+            "name": "Anatoly Fenric",
+            "email": "anatoly@fenric.ru",
+            "homepage": "https://anatoly.fenric.ru/"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "sunrise/http-factory": "^1.2"
+    },
+    "require-dev": {
+        "arus/php-coding-standard": "^1.0",
+        "phpunit/phpunit": "7.5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arus\\Http\\Responder\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "phpcs",
+            "phpunit --colors=always --coverage-text"
+        ]
+    }
+}
