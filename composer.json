@@ -29,6 +29,11 @@
             "Arus\\Http\\Response\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Arus\\Http\\Response\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "test": [
             "phpcs",
