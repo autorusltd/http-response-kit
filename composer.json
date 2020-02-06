@@ -1,14 +1,13 @@
 {
-    "name": "arus/http-responder",
-    "homepage": "https://github.com/autorusltd/http-responder",
-    "description": "Arus // HTTP responder for PHP 7.1+ based on PSR-17",
+    "name": "arus/http-response-kit",
+    "homepage": "https://github.com/autorusltd/http-response-kit",
+    "description": "Arus // HTTP Response Kit for PHP 7.1+ based on PSR-17",
     "license": "MIT",
     "keywords": [
         "arus",
         "fenric",
         "psr-7",
-        "psr-17",
-        "responder"
+        "psr-17"
     ],
     "authors": [
         {
@@ -27,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Arus\\Http\\Responder\\": "src/"
+            "Arus\\Http\\Response\\": "src/"
         }
     },
     "scripts": {

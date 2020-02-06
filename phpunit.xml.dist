@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <phpunit colors="true">
     <testsuites>
-        <testsuite name="Arus Http Responder Test Suite">
+        <testsuite name="Arus Http Response Kit Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
