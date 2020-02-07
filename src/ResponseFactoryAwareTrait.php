@@ -5,9 +5,16 @@ namespace Arus\Http\Response;
 /**
  * Import classes
  */
+use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+
+/**
+ * Import functions
+ */
+use function json_encode;
+use function json_last_error_msg;
 
 /**
  * ResponseFactoryAwareTrait
@@ -16,40 +23,68 @@ trait ResponseFactoryAwareTrait
 {
 
     /**
+     * @var string
+     */
+    protected $responseFactory = ResponseFactory::class;
+
+    /**
      * @var int
      */
     protected $jsonOptions = 0;
 
     /**
+     * @var int
+     */
+    protected $jsonDepth = 512;
+
+    /**
      * @param int $status
      *
      * @return ResponseInterface
      */
-    public function empty(int $status) : ResponseInterface
+    public function createResponse(int $status = 200) : ResponseInterface
     {
-        return (new ResponseFactory)->createResponse($status);
+        return (new $this->responseFactory)->createResponse($status);
     }
 
     /**
-     * @param int $status
      * @param mixed $content
+     * @param int $status
      *
      * @return ResponseInterface
      */
-    public function html(int $status, $content) : ResponseInterface
+    public function html($content, int $status = 200) : ResponseInterface
     {
-        return (new ResponseFactory)->createHtmlResponse($status, $content);
+        $response = $this->createResponse($status)
+            ->withHeader('Content-Type', 'text/html; charset=utf-8');
+
+        $response->getBody()->write((string) $content);
+
+        return $response;
     }
 
     /**
-     * @param int $status
      * @param mixed $payload
+     * @param int $status
      *
      * @return ResponseInterface
+     *
+     * @throws RuntimeException
      */
-    public function json(int $status, $payload) : ResponseInterface
+    public function json($payload, int $status = 200) : ResponseInterface
     {
-        return (new ResponseFactory)->createJsonResponse($status, $payload, $this->jsonOptions);
+        $content = json_encode($payload, $this->jsonOptions, $this->jsonDepth);
+
+        if (false === $content) {
+            throw new RuntimeException('JSON error: ' . json_last_error_msg());
+        }
+
+        $response = $this->createResponse($status)
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+
+        $response->getBody()->write($content);
+
+        return $response;
     }
 
     /**
@@ -61,10 +96,10 @@ trait ResponseFactoryAwareTrait
      */
     public function ok(array $data = [], array $meta = [], int $status = 200) : ResponseInterface
     {
-        return $this->json($status, [
+        return $this->json([
             'meta' => $meta,
             'data' => $data,
-        ]);
+        ], $status);
     }
 
     /**
@@ -77,13 +112,13 @@ trait ResponseFactoryAwareTrait
      */
     public function error(string $message, string $source = null, $code = null, int $status = 400) : ResponseInterface
     {
-        return $this->json($status, [
+        return $this->json([
             'errors' => [[
                 'code' => $code,
                 'source' => $source,
                 'message' => $message,
             ]],
-        ]);
+        ], $status);
     }
 
     /**
@@ -103,8 +138,8 @@ trait ResponseFactoryAwareTrait
             ];
         }
 
-        return $this->json($status, [
+        return $this->json([
             'errors' => $errors,
-        ]);
+        ], $status);
     }
 }
