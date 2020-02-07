@@ -199,7 +199,10 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
 
-        $this->assertSame('{"meta":[],"data":[]}', $response->getBody()->__toString());
+        $this->assertSame(
+            '{"meta":[],"data":[]}',
+            $response->getBody()->__toString()
+        );
     }
 
     /**
@@ -213,7 +216,10 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(400, $response->getStatusCode());
 
-        $this->assertSame('{"meta":["bar"],"data":["foo"]}', $response->getBody()->__toString());
+        $this->assertSame(
+            '{"meta":["bar"],"data":["foo"]}',
+            $response->getBody()->__toString()
+        );
     }
 
     /**
@@ -227,7 +233,10 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(400, $response->getStatusCode());
 
-        $this->assertSame('{"errors":[{"code":null,"source":null,"message":"foo"}]}', $response->getBody()->__toString());
+        $this->assertSame(
+            '{"errors":[{"code":null,"source":null,"message":"foo"}]}',
+            $response->getBody()->__toString()
+        );
     }
 
     /**
@@ -241,7 +250,10 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(500, $response->getStatusCode());
 
-        $this->assertSame('{"errors":[{"code":"xxx","source":"bar","message":"foo"}]}', $response->getBody()->__toString());
+        $this->assertSame(
+            '{"errors":[{"code":"xxx","source":"bar","message":"foo"}]}',
+            $response->getBody()->__toString()
+        );
     }
 
     /**
@@ -258,8 +270,11 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(400, $response->getStatusCode());
 
-        $this->assertSame('{"errors":[{"code":"baz","source":"bar","message":"foo"},' .
-            '{"code":"quuux","source":"quux","message":"qux"}]}', $response->getBody()->__toString());
+        $this->assertSame(
+            '{"errors":[{"code":"baz","source":"bar","message":"foo"},' .
+                '{"code":"quuux","source":"quux","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
     }
 
     /**
