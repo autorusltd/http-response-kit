@@ -13,7 +13,7 @@ class Errors implements ResourceInterface
      *
      * @var Error[]
      */
-    private $errors = [];
+    private $errors;
 
     /**
      * Constructor of the class
