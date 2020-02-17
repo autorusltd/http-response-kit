@@ -5,6 +5,8 @@ namespace Arus\Http\Response;
 /**
  * Import classes
  */
+use Arus\Http\Response\Resource\Error;
+use Arus\Http\Response\Resource\Errors;
 use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -88,13 +90,13 @@ trait ResponseFactoryAwareTrait
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
      * @param array $meta
      * @param int $status
      *
      * @return ResponseInterface
      */
-    public function ok(array $data = [], array $meta = [], int $status = 200) : ResponseInterface
+    public function ok($data = [], array $meta = [], int $status = 200) : ResponseInterface
     {
         return $this->json([
             'meta' => $meta,
@@ -112,13 +114,9 @@ trait ResponseFactoryAwareTrait
      */
     public function error(string $message, string $source = null, $code = null, int $status = 400) : ResponseInterface
     {
-        return $this->json([
-            'errors' => [[
-                'code' => $code,
-                'source' => $source,
-                'message' => $message,
-            ]],
-        ], $status);
+        $error = new Error($message, $source, $code);
+
+        return $this->json(new Errors($error), $status);
     }
 
     /**
@@ -131,15 +129,13 @@ trait ResponseFactoryAwareTrait
     {
         $errors = [];
         foreach ($violations as $violation) {
-            $errors[] = [
-                'code' => $violation->getCode(),
-                'source' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage(),
-            ];
+            $errors[] = new Error(
+                $violation->getMessage(),
+                $violation->getPropertyPath(),
+                $violation->getCode()
+            );
         }
 
-        return $this->json([
-            'errors' => $errors,
-        ], $status);
+        return $this->json(new Errors(...$errors), $status);
     }
 }
