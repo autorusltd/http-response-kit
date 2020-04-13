@@ -10,13 +10,6 @@ use Arus\Http\Response\Resource\Errors;
 use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use RuntimeException;
-
-/**
- * Import functions
- */
-use function json_encode;
-use function json_last_error_msg;
 
 /**
  * ResponseFactoryAwareTrait
@@ -46,7 +39,8 @@ trait ResponseFactoryAwareTrait
      */
     public function createResponse(int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)->createResponse($status);
+        return (new $this->responseFactory)
+            ->createResponse($status);
     }
 
     /**
@@ -57,12 +51,8 @@ trait ResponseFactoryAwareTrait
      */
     public function html($content, int $status = 200) : ResponseInterface
     {
-        $response = $this->createResponse($status)
-            ->withHeader('Content-Type', 'text/html; charset=utf-8');
-
-        $response->getBody()->write((string) $content);
-
-        return $response;
+        return (new $this->responseFactory)
+            ->createHtmlResponse($status, $content);
     }
 
     /**
@@ -70,23 +60,11 @@ trait ResponseFactoryAwareTrait
      * @param int $status
      *
      * @return ResponseInterface
-     *
-     * @throws RuntimeException
      */
     public function json($payload, int $status = 200) : ResponseInterface
     {
-        $content = json_encode($payload, $this->jsonOptions, $this->jsonDepth);
-
-        if (false === $content) {
-            throw new RuntimeException('JSON error: ' . json_last_error_msg());
-        }
-
-        $response = $this->createResponse($status)
-            ->withHeader('Content-Type', 'application/json; charset=utf-8');
-
-        $response->getBody()->write($content);
-
-        return $response;
+        return (new $this->responseFactory)
+            ->createJsonResponse($status, $payload, $this->jsonOptions, $this->jsonDepth);
     }
 
     /**
