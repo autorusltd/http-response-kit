@@ -13,7 +13,6 @@ use Zend\Diactoros\Response as ZendResponse;
 use Zend\Diactoros\ResponseFactory as ZendResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
-use RuntimeException;
 
 /**
  * ResponseFactoryTest
@@ -168,24 +167,6 @@ class ResponseFactoryTest extends TestCase
         })->json(['123']);
 
         $this->assertSame('[123]', $response->getBody()->__toString());
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateJsonResponseWithCustomJsonDepth() : void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('JSON error: Maximum stack depth exceeded');
-
-        $response = (new class () {
-            use ResponseFactoryAwareTrait;
-
-            public function __construct()
-            {
-                $this->jsonDepth = 1;
-            }
-        })->json([[]]);
     }
 
     /**
