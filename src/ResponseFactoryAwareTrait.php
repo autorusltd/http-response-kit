@@ -116,4 +116,23 @@ trait ResponseFactoryAwareTrait
 
         return $this->json(new Errors(...$errors), $status);
     }
+
+    /**
+     * @param array $violations
+     * @param int $status
+     *
+     * @return ResponseInterface
+     */
+    public function jsonViolations(array $violations, int $status = 400) : ResponseInterface
+    {
+        $errors = [];
+        foreach ($violations as $violation) {
+            $errors[] = new Error(
+                $violation['message'],
+                $violation['property']
+            );
+        }
+
+        return $this->json(new Errors(...$errors), $status);
+    }
 }
