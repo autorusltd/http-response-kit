@@ -269,4 +269,43 @@ class ResponseFactoryTest extends TestCase
 
         $this->assertSame(500, $response->getStatusCode());
     }
+
+    /**
+     * @return void
+     */
+    public function testCreateJsonViolationsResponse() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->jsonViolations([
+            [
+                'message' => 'foo',
+                'property' => 'bar',
+            ],
+            [
+                'message' => 'baz',
+                'property' => 'qux',
+            ],
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":null,"source":"bar","message":"foo"},' .
+                '{"code":null,"source":"qux","message":"baz"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateJsonViolationsResponseWithCustomStatusCode() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->jsonViolations([], 500);
+
+        $this->assertSame(500, $response->getStatusCode());
+    }
 }
