@@ -215,7 +215,7 @@ class ResponseFactoryTest extends TestCase
         $this->assertSame(400, $response->getStatusCode());
 
         $this->assertSame(
-            '{"errors":[{"code":null,"source":null,"message":"foo"}]}',
+            '{"errors":[{"code":null,"source":"","message":"foo"}]}',
             $response->getBody()->__toString()
         );
     }
