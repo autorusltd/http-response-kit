@@ -36,14 +36,14 @@ class Error implements ResourceInterface
      * @param string $source
      * @param mixed $code
      */
-    public function __construct(string $message, string $source = '', $code = null)
+    public function __construct(string $message, string $source = null, $code = null)
     {
         if (!is_null($code)) {
             $code = (string) $code;
         }
 
         $this->message = $message;
-        $this->source = $source;
+        $this->source = (string) $source;
         $this->code = $code;
     }
 
