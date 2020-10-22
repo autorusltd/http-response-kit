@@ -25,7 +25,7 @@ class Error implements ResourceInterface
     /**
      * The error code
      *
-     * @var mixed
+     * @var null|string
      */
     private $code;
 
@@ -36,8 +36,12 @@ class Error implements ResourceInterface
      * @param string $source
      * @param mixed $code
      */
-    public function __construct(string $message, string $source = null, $code = null)
+    public function __construct(string $message, string $source = '', $code = null)
     {
+        if (!is_null($code)) {
+            $code = (string) $code;
+        }
+
         $this->message = $message;
         $this->source = $source;
         $this->code = $code;
