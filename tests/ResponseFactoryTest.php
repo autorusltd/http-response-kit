@@ -9,8 +9,8 @@ use Arus\Http\Response\ResponseFactoryAwareTrait;
 use PHPUnit\Framework\TestCase;
 use Sunrise\Http\Message\Response as SunriseResponse;
 use Sunrise\Http\Message\ResponseFactory as SunriseResponseFactory;
-use Zend\Diactoros\Response as ZendResponse;
-use Zend\Diactoros\ResponseFactory as ZendResponseFactory;
+use Laminas\Diactoros\Response as ZendResponse;
+use Laminas\Diactoros\ResponseFactory as ZendResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
 

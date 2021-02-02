@@ -1,13 +1,15 @@
 {
     "name": "arus/http-response-kit",
     "homepage": "https://github.com/autorusltd/http-response-kit",
-    "description": "Arus // HTTP Response Kit for PHP 7.1+ based on PSR-17",
+    "description": "Arus // HTTP Response Kit for PHP 7.1+ (incl. PHP 8) based on PSR-17",
     "license": "MIT",
     "keywords": [
         "arus",
         "fenric",
         "psr-7",
-        "psr-17"
+        "psr-17",
+        "php7",
+        "php8"
     ],
     "authors": [
         {
@@ -17,13 +19,13 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1|^8.0"
     },
     "require-dev": {
+        "phpunit/phpunit": "7.5.20|9.5.0",
         "arus/php-coding-standard": "^1.0",
-        "phpunit/phpunit": "7.5.1",
         "sunrise/http-message": "^1.3",
-        "zendframework/zend-diactoros": "^2.2",
+        "laminas/laminas-diactoros": "^2.4|^2.5",
         "symfony/validator": "^4.0"
     },
     "autoload": {
@@ -38,8 +40,8 @@
     },
     "scripts": {
         "test": [
-            "phpcs",
-            "phpunit --colors=always --coverage-text"
+            "phpunit --colors=always --coverage-text",
+            "phpcs"
         ]
     }
 }
