@@ -13,6 +13,7 @@ use Laminas\Diactoros\Response as ZendResponse;
 use Laminas\Diactoros\ResponseFactory as ZendResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
+use InvalidArgumentException;
 
 /**
  * ResponseFactoryTest
@@ -307,5 +308,122 @@ class ResponseFactoryTest extends TestCase
         })->jsonViolations([], 500);
 
         $this->assertSame(500, $response->getStatusCode());
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithObjects() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([
+            new ConstraintViolation('foo', null, [], null, 'bar', null, null, 'baz'),
+            new ConstraintViolation('qux', null, [], null, 'quux', null, null, 'quuux'),
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":"baz","source":"bar","message":"foo"},' .
+                '{"code":"quuux","source":"quux","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithSourceableArrays() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([
+            ['code' => 'foo', 'source' => 'bar', 'message' => 'baz'],
+            ['code' => 'bar', 'source' => 'baz', 'message' => 'qux'],
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":"foo","source":"bar","message":"baz"},' .
+                '{"code":"bar","source":"baz","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithSourceableArraysWithoutCodes() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([
+            ['source' => 'bar', 'message' => 'baz'],
+            ['source' => 'baz', 'message' => 'qux'],
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":null,"source":"bar","message":"baz"},' .
+                '{"code":null,"source":"baz","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithPropertyableArrays() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([
+            ['code' => 'foo', 'property' => 'bar', 'message' => 'baz'],
+            ['code' => 'bar', 'property' => 'baz', 'message' => 'qux'],
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":"foo","source":"bar","message":"baz"},' .
+                '{"code":"bar","source":"baz","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithPropertyableArraysWithoutCodes() : void
+    {
+        $response = (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([
+            ['property' => 'bar', 'message' => 'baz'],
+            ['property' => 'baz', 'message' => 'qux'],
+        ]);
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $this->assertSame(
+            '{"errors":[{"code":null,"source":"bar","message":"baz"},' .
+                '{"code":null,"source":"baz","message":"qux"}]}',
+            $response->getBody()->__toString()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testViolationsWithInvalidData() : void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        (new class () {
+            use ResponseFactoryAwareTrait;
+        })->violations([null]);
     }
 }
