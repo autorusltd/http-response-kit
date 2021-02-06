@@ -9,7 +9,13 @@ use Arus\Http\Response\Resource\Error;
 use Arus\Http\Response\Resource\Errors;
 use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\ResponseFactory;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use InvalidArgumentException;
+
+/**
+ * Import functions
+ */
+use function is_array;
 
 /**
  * ResponseFactoryAwareTrait
@@ -98,20 +104,48 @@ trait ResponseFactoryAwareTrait
     }
 
     /**
-     * @param ConstraintViolationListInterface $violations
+     * @param iterable $violations
      * @param int $status
      *
      * @return ResponseInterface
+     *
+     * @throws InvalidArgumentException
      */
-    public function violations(ConstraintViolationListInterface $violations, int $status = 400) : ResponseInterface
+    public function violations(iterable $violations, int $status = 400) : ResponseInterface
     {
         $errors = [];
         foreach ($violations as $violation) {
-            $errors[] = new Error(
-                $violation->getMessage(),
-                $violation->getPropertyPath(),
-                $violation->getCode()
-            );
+            if ($violation instanceof ConstraintViolationInterface) {
+                $errors[] = new Error(
+                    $violation->getMessage(),
+                    $violation->getPropertyPath(),
+                    $violation->getCode()
+                );
+
+                continue;
+            }
+
+            if (is_array($violation) && isset($violation['message'], $violation['source'])) {
+                $errors[] = new Error(
+                    $violation['message'],
+                    $violation['source'],
+                    $violation['code'] ?? null
+                );
+
+                continue;
+            }
+
+            if (is_array($violation) && isset($violation['message'], $violation['property'])) {
+                $errors[] = new Error(
+                    $violation['message'],
+                    $violation['property'],
+                    $violation['code'] ?? null
+                );
+
+                continue;
+            }
+
+            throw new InvalidArgumentException('Unexpected violation');
         }
 
         return $this->json(new Errors(...$errors), $status);
