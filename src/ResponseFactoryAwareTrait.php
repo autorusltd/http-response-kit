@@ -7,7 +7,9 @@ namespace Arus\Http\Response;
  */
 use Arus\Http\Response\Resource\Error;
 use Arus\Http\Response\Resource\Errors;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use Sunrise\Http\Message\Response\HtmlResponse;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use InvalidArgumentException;
@@ -34,19 +36,15 @@ trait ResponseFactoryAwareTrait
     protected $jsonOptions = 0;
 
     /**
-     * @var int
-     */
-    protected $jsonDepth = 512;
-
-    /**
      * @param int $status
      *
      * @return ResponseInterface
      */
     public function createResponse(int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createResponse($status);
+        /** @var ResponseFactory $factory */
+        $factory = (new $this->responseFactory);
+        return $factory->createResponse($status);
     }
 
     /**
@@ -57,20 +55,19 @@ trait ResponseFactoryAwareTrait
      */
     public function html($content, int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createHtmlResponse($status, $content);
+        return new HtmlResponse($status, $content);
     }
 
     /**
      * @param mixed $payload
      * @param int $status
+     * @param array $headers
      *
      * @return ResponseInterface
      */
-    public function json($payload, int $status = 200) : ResponseInterface
+    public function json($payload, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createJsonResponse($status, $payload, $this->jsonOptions, $this->jsonDepth);
+        return new JsonResponse($status, $payload, $headers, $this->jsonOptions);
     }
 
     /**
@@ -90,7 +87,7 @@ trait ResponseFactoryAwareTrait
 
     /**
      * @param string $message
-     * @param string $source
+     * @param string|null $source
      * @param mixed $code
      * @param int $status
      *

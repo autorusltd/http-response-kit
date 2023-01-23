@@ -6,3 +6,4 @@ phpbench.json
 phpcs.xml
 phpunit.xml
 vendor/
+.idea
