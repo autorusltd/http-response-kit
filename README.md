@@ -12,5 +12,5 @@
 ## Installation (via composer)
 
 ```bash
-composer require 'autorusltd/http-response-kit:^2.1'
+composer require 'arus/http-response-kit:^2.0'
 ```
