@@ -8,6 +8,8 @@ namespace Arus\Http\Response;
 use Arus\Http\Response\Resource\Error;
 use Arus\Http\Response\Resource\Errors;
 use Psr\Http\Message\ResponseInterface;
+use Sunrise\Http\Message\Response\HtmlResponse;
+use Sunrise\Http\Message\Response\JsonResponse;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use InvalidArgumentException;
@@ -45,8 +47,9 @@ trait ResponseFactoryAwareTrait
      */
     public function createResponse(int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createResponse($status);
+        /** @var ResponseFactory $factory */
+        $factory = (new $this->responseFactory);
+        return $factory->createResponse($status);
     }
 
     /**
@@ -57,8 +60,7 @@ trait ResponseFactoryAwareTrait
      */
     public function html($content, int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createHtmlResponse($status, $content);
+        return new HtmlResponse($status, $content);
     }
 
     /**
@@ -69,8 +71,7 @@ trait ResponseFactoryAwareTrait
      */
     public function json($payload, int $status = 200) : ResponseInterface
     {
-        return (new $this->responseFactory)
-            ->createJsonResponse($status, $payload, $this->jsonOptions, $this->jsonDepth);
+        return new JsonResponse($status, $payload, $this->jsonOptions, $this->jsonDepth);
     }
 
     /**
@@ -90,7 +91,7 @@ trait ResponseFactoryAwareTrait
 
     /**
      * @param string $message
-     * @param string $source
+     * @param string|null $source
      * @param mixed $code
      * @param int $status
      *
