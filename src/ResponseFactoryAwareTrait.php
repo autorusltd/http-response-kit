@@ -7,9 +7,9 @@ namespace Arus\Http\Response;
  */
 use Arus\Http\Response\Resource\Error;
 use Arus\Http\Response\Resource\Errors;
-use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Sunrise\Http\Message\Response\HtmlResponse;
+use Sunrise\Http\Message\Response\JsonResponse;
 use Sunrise\Http\Message\ResponseFactory;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use InvalidArgumentException;
@@ -34,6 +34,11 @@ trait ResponseFactoryAwareTrait
      * @var int
      */
     protected $jsonOptions = 0;
+
+    /**
+     * @var int
+     */
+    protected $jsonDepth = 512;
 
     /**
      * @param int $status
@@ -61,13 +66,12 @@ trait ResponseFactoryAwareTrait
     /**
      * @param mixed $payload
      * @param int $status
-     * @param array $headers
      *
      * @return ResponseInterface
      */
-    public function json($payload, int $status = 200, array $headers = []) : ResponseInterface
+    public function json($payload, int $status = 200) : ResponseInterface
     {
-        return new JsonResponse($status, $payload, $headers, $this->jsonOptions);
+        return new JsonResponse($status, $payload, $this->jsonOptions, $this->jsonDepth);
     }
 
     /**
